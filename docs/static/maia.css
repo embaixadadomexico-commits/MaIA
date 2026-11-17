@@ -1,0 +1,69 @@
+.maia {
+  --maia-wine: #6a1230;
+  --maia-border: #e7dcc7;
+  margin: 18px 0;
+  padding: clamp(12px, 3vw, 24px);
+  background: #fff;
+  border: 1px solid var(--maia-border);
+  border-radius: 6px;
+}
+.maia-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 2px solid #c8a96b;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+.maia-header h2 { margin: 0; color: var(--maia-wine); font-size: 1.75rem; }
+.maia-header label { margin: 0; display: flex; align-items: center; gap: 8px; }
+.maia select, .maia textarea {
+  border: 1px solid #9b8e79;
+  border-radius: 5px;
+  color: #26211d;
+  background: #fff;
+  padding: 6px 9px;
+  font: inherit;
+}
+.maia-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: clamp(220px, 42vh, 420px);
+  overflow-y: auto;
+  padding: 12px;
+  background: #faf7f2;
+  border: 1px solid var(--maia-border);
+  border-radius: 6px;
+}
+.maia-message {
+  align-self: flex-start;
+  margin: 0;
+  padding: 8px 12px;
+  max-width: 90%;
+  border-radius: 6px;
+  border: 1px solid var(--maia-border);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #fff;
+  color: #26211d;
+}
+.maia-message.maia-user { align-self: flex-end; background: #f6e8ee; }
+.maia-form { display: flex; align-items: stretch; gap: 10px; margin-top: 12px; }
+.maia-form textarea { flex: 1; min-width: 0; resize: vertical; }
+.maia-form button {
+  padding: 6px 14px;
+  border: 1px solid var(--maia-wine);
+  border-radius: 5px;
+  background: var(--maia-wine);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+.maia-form button:disabled { opacity: .65; cursor: wait; }
+.high-contrast .maia { background: #000; }
+.high-contrast .maia-message { background: #000; color: #fff; }
+@media (max-width: 400px) {
+  .maia-header label { flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+}

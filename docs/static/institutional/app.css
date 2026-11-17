@@ -1,0 +1,7 @@
+.access-button{position:fixed;right:10px;bottom:50px;width:50px;height:50px;background:#4054b2;color:white;font-size:34px;line-height:1;border:1px solid #ddd;box-shadow:1px 1px 5px #555;z-index:9999;cursor:pointer}
+.access-panel{position:fixed;right:10px;bottom:110px;background:white;padding:20px;border:1px solid #ddd;box-shadow:0 4px 20px #0003;z-index:9999;max-width:310px}
+.access-panel button{display:block;width:100%;margin-top:10px;padding:9px;border:1px solid #ddd;cursor:pointer}
+.high-contrast,.high-contrast main,.high-contrast article div{background:#000!important;color:white!important}
+.high-contrast main p,.high-contrast main h2,.high-contrast main a{color:white!important}
+:focus-visible{outline:3px solid #a57f2c;outline-offset:3px}
+@media(max-width:575px){.jwts_tabbernav{line-height:2!important} .jwts_tabbernav a{white-space:normal!important} article{overflow-wrap:anywhere} .access-panel{max-width:calc(100vw - 20px)}}
