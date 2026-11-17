@@ -5,6 +5,7 @@
   const messages = document.getElementById('chat-messages');
   const selector = document.getElementById('chat-language');
   const submit = form.querySelector('button[type="submit"]');
+  const history = [];
   const translations = {
     'pt-BR': {
       language: 'Idioma',
@@ -158,7 +159,7 @@
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message: question, language}),
+        body: JSON.stringify({message: question, language, history}),
       });
       const data = response.ok ? await response.json() : null;
       if (data) {
@@ -169,6 +170,8 @@
     } catch {
       addMessage(copy.connection, 'bot', language);
     } finally {
+      history.push(question);
+      if (history.length > 8) history.shift();
       waiting.remove();
       input.disabled = false;
       submit.disabled = false;
