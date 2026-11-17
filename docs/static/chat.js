@@ -14,6 +14,8 @@
       placeholder: 'Digite sua pergunta',
       log: 'Conversa',
       more: 'Para mais informações: ',
+      phone: 'Telefone',
+      email: 'Email',
       waiting: 'Estou consultando as informações…',
       unavailable: 'O chat está temporariamente indisponível. Tente novamente mais tarde.',
       empty: 'Não encontrei uma resposta.',
@@ -27,6 +29,8 @@
       placeholder: 'Escribe tu pregunta',
       log: 'Conversación',
       more: 'Para más información: ',
+      phone: 'Teléfono',
+      email: 'Correo electrónico',
       waiting: 'Estoy consultando la información…',
       unavailable: 'El chat no está disponible temporalmente. Inténtalo más tarde.',
       empty: 'No encontré una respuesta.',
@@ -46,7 +50,7 @@
     messages.setAttribute('aria-label', copy.log);
   }
 
-  function renderAnswer(message, text, source, language) {
+  function appendFormattedText(message, text) {
     for (const part of text.split(/(\*\*[^*\r\n]+\*\*)/)) {
       if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
         const bold = document.createElement('strong');
@@ -56,12 +60,61 @@
         message.append(part);
       }
     }
+  }
+
+  function appendContact(message, label, value, kind) {
+    const bold = document.createElement('strong');
+    bold.textContent = label + ':';
+    message.append(bold, ' ');
+
+    const pattern = kind === 'email'
+      ? /[A-Z0-9.!#$%&'*+/=?^_{}|~-]+@[A-Z0-9](?:[A-Z0-9-]*[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]*[A-Z0-9])?)+/gi
+      : /(?:\+?\d|\(\d{2,3}\))(?:[ \u00a0().-]*\d){5,14}\b/g;
+    let offset = 0;
+    for (const match of value.matchAll(pattern)) {
+      const contact = match[0];
+      const number = kind === 'phone' ? contact.replace(/\D/g, '') : '';
+      if (kind === 'phone' && (number.length < 8 || number.length > 15)) continue;
+      message.append(value.slice(offset, match.index));
+      const link = document.createElement('a');
+      link.href = kind === 'email'
+        ? 'mailto:' + contact.replace(/[?#%]/g, encodeURIComponent)
+        : 'tel:' + (contact.startsWith('+') ? '+' : '') + number;
+      link.textContent = contact;
+      message.append(link);
+      offset = match.index + contact.length;
+    }
+    message.append(value.slice(offset));
+  }
+
+  function renderAnswer(message, text, source, language) {
+    const copy = translations[language];
+    let previousWasContact = false;
+    let pendingBreak = '';
+    for (const line of text.trim().split(/\r?\n/)) {
+      if (!line.trim()) {
+        if (pendingBreak) pendingBreak = '\n\n';
+        continue;
+      }
+      const contact = /^\s*(?:[-•]\s+)?(?:\*\*)?(telefone|tel[eé]fono|e-?mail|correo(?: electr[oó]nico)?)(?:\*\*)?\s*:(?:\*\*)?\s*(.+)$/i.exec(line);
+      if (contact) {
+        if (pendingBreak) message.append(previousWasContact ? '\n' : '\n\n');
+        const kind = /^tel/i.test(contact[1]) ? 'phone' : 'email';
+        const value = contact[2].trim().replace(/\*\*/g, '');
+        appendContact(message, copy[kind], value, kind);
+      } else {
+        message.append(pendingBreak);
+        appendFormattedText(message, line);
+      }
+      previousWasContact = Boolean(contact);
+      pendingBreak = '\n';
+    }
     if (typeof source !== 'string' || !/^https?:\/\//i.test(source)) return;
 
     const link = document.createElement('a');
     link.href = source;
     link.textContent = source;
-    message.append('\n\n' + translations[language].more, link);
+    message.append('\n\n' + copy.more, link);
   }
 
   function addMessage(text, kind, language, sources) {
